@@ -2,6 +2,7 @@ use crate::identifier::Identifier;
 use crate::parser::ParseError;
 use crate::binop::Binop;
 use crate::parsing::leftexpression::LeftExpression;
+use std::fmt::Display;
 
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug)]
@@ -12,11 +13,13 @@ pub enum Expression {
     BinOp(Box<Expression>, Binop, Box<Expression>),
     // à compléter ensuite
 }
+
+/*pub enum Instruction {
+    Expr(Expression),
+    Let(Identifier, Expression),
+    // ...
+}*/
 ////////////////////////////////////////////////////////////////////////////////
-
-
-
-use std::fmt::Display;
 
 impl Display for Expression {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
