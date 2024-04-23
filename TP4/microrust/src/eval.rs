@@ -1,12 +1,10 @@
 use crate::error::{EvalError, Error};
 use crate::expression::Expression;
 use crate::binop::Binop;
-use crate::namespace::{self, NameSpace};
-use crate::parsing::instruction::Instruction;
-use crate::identifier::Identifier;
-
+use crate::{instruction::Instruction, namespace::NameSpace};
 
 impl Expression {
+
     pub fn eval(&self, namespace: &NameSpace) -> Result<isize, Error> {
         match self {
             Expression::Const(value) => Ok(*value),
@@ -43,16 +41,17 @@ impl Expression {
     }
 }
 
-impl Instruction {
-    
-    fn exec(&self, ns: &mut NameSpace) -> Result<(), EvalError>{
+impl NameSpace {
 
-        match self {
-            Instruction::Expr(expr) => expr.eval(&ns)?,
-            Instruction::Let{ id, expr, .. } => {
-                let value = expr.eval(&ns)?;
-                ns.declare(id, value)?;
+    pub fn exec(&mut self, instr: &Instruction, ns: &mut NameSpace) -> Result<(), EvalError>{
+
+        match instr {
+            Instruction::Expr(expr) => {
+                let _ = expr.eval(ns);
                 Ok(())
+            }
+            Instruction::Let { id, expr } => {
+                todo!()
             }
         }
     }

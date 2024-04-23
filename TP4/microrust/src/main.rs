@@ -8,6 +8,7 @@ mod expression;
 mod eval;
 mod namespace;
 mod test_namespace;
+mod instruction;
 
 // LISTE DES IMPORTS
 use std::io::{self, BufRead, Write};
