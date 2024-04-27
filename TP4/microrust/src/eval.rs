@@ -1,18 +1,16 @@
-use crate::error::{EvalError, Error};
+use crate::error::EvalError;
 use crate::expression::Expression;
 use crate::binop::Binop;
 use crate::{instruction::Instruction, namespace::NameSpace};
+use crate::identifier::Identifier;
 
 impl Expression {
 
-    pub fn eval(&self, namespace: &NameSpace) -> Result<isize, Error> {
+    pub fn eval(&self, namespace: &NameSpace) -> Result<isize, EvalError> {
         match self {
             Expression::Const(value) => Ok(*value),
             Expression::Identifier(id) => {
-                match namespace.find(id) {
-                    Ok(value) => Ok(value),
-                    Err(err) => Err(err.into()),
-                }
+                Ok(namespace.find(id)?)
             },
             Expression::BinOp(left, op, right) => {
                 let left_val = left.eval(&namespace)?;
@@ -23,14 +21,14 @@ impl Expression {
                     Binop::Mul => Ok(left_val * right_val),
                     Binop::Div => {
                         if right_val == 0 {
-                            Err(EvalError::DivisionByZero(self.clone()).into())
+                            Err(EvalError::DivisionByZero(self.clone()))
                         } else {
                             Ok(left_val / right_val)
                         }
                     }
                     Binop::Mod => {
                         if right_val == 0 {
-                            Err(EvalError::DivisionByZero(self.clone()).into())
+                            Err(EvalError::DivisionByZero(self.clone()))
                         } else {
                             Ok(left_val % right_val)
                         }
@@ -41,16 +39,21 @@ impl Expression {
     }
 }
 
-impl NameSpace {
+impl Instruction {
 
-    pub fn exec(&mut self, instr: &Instruction, ns: &mut NameSpace) -> Result<(), EvalError>{
+    pub fn exec(&mut self, ns: &mut NameSpace) -> Result<(Option<Identifier>, isize), EvalError>{
 
-        match instr {
+        match self {
             Instruction::Expr(expr) => {
-                let _ = expr.eval(ns);
-                Ok(())
+                let entier = expr.eval(ns)?;
+                Ok((None, entier))
             }
             Instruction::Let { id, expr } => {
+                let entier = expr.eval(&ns)?;
+                let _def = ns.declare(&Identifier::from(id.as_str()), entier);
+                Ok((Some(Identifier::from(id.as_str())), entier))
+            }
+            Instruction::Block(vec) => {
                 todo!()
             }
         }

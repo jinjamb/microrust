@@ -1,4 +1,3 @@
-// LISTE DES MODULES
 mod parsing;
 mod parser;
 mod error;
@@ -7,28 +6,26 @@ mod binop;
 mod expression;
 mod eval;
 mod namespace;
-mod test_namespace;
 mod instruction;
+#[cfg(test)]
+mod test_namespace;
 
-// LISTE DES IMPORTS
 use std::io::{self, BufRead, Write};
-use expression::Expression;
 use parser::Parse;
 use namespace::NameSpace;
+use instruction::Instruction;
 
-
-// AFFICHAGE DU PROMPT
 fn prompt() {
     print!("µRust # ");
     io::stdout().flush().unwrap();
 }
 
-
-// FONCTION PRINCIPALE
 fn main() {
+
+    let mut namespace = NameSpace::new();
+
     loop {
 
-        let namespace = NameSpace::new();
 
         prompt();
 
@@ -41,7 +38,7 @@ fn main() {
                 }
             };
 
-            let e = match Expression::parse(&input) {
+            let mut i = match Instruction::parse(&input) {
                 Ok(expr) => expr,
                 Err(_) => {
                     println!("Cannot parse");
@@ -49,15 +46,13 @@ fn main() {
                 }
             };
 
-            let n = match e.eval(&namespace) {
-                Ok(value) => value,
+            match i.exec(&mut namespace) {
+                Ok((option, entier)) => println!("{:?} : isize = {}", option, entier),
                 Err(err) => {
-                    println!("Evaluation Error: {}", err);
+                    println!("{}", err);
                     continue;
                 }
             };
-
-            println!("- : isize = {}", n);
 
             break;
         }
