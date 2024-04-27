@@ -1,10 +1,9 @@
-use crate::identifier::Identifier;
 use crate::expression::Expression;
 
 #[derive(Debug)]
 pub enum Instruction {
     Expr(Expression),
-    Let{id:Identifier, expr:Expression},
+    Let{id:String, expr:Expression},
     Block(Vec<Instruction>),
 } 
 
@@ -34,7 +33,7 @@ impl From<ParseInstruction> for Result<Instruction, ParseError> {
     fn from(instr: ParseInstruction) -> Self {
         match instr {
             ParseInstruction::Expr(expr) => Ok(Instruction::Expr(Expression::parse(&expr.to_string())?)),
-            ParseInstruction::Let{id, expr, ..} => Ok(Instruction::Let{id, expr: Expression::parse(&expr.to_string())?}),
+            ParseInstruction::Let{id, expr, ..} => Ok(Instruction::Let{id: id.to_string(), expr: Expression::parse(&expr.to_string())?}),
             ParseInstruction::Block(instrs) => {
                 let instrs: Result<Vec<Instruction>, ParseError> = instrs.into_iter().map(|x| <_>::from(x)).collect();
                 Ok(Instruction::Block(instrs?))
