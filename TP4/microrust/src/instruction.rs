@@ -3,7 +3,7 @@ use crate::expression::Expression;
 #[derive(Debug)]
 pub enum Instruction {
     Expr(Expression),
-    Let{id:String, expr:Expression},
+    Let{id:String, mutable:bool, expr:Expression},
     Block(Vec<Instruction>),
 } 
 
@@ -13,8 +13,12 @@ impl Display for Instruction {
         use Instruction::*;
         match self {
             Expr(expr) => write!(f, "{}", expr),
-            Let{id, expr} => {
-                write!(f, "let {} = {}", id, expr)
+            Let{id, mutable, expr} => {
+                if *mutable {
+                    write!(f, "let mut {} = {}", id, expr)
+                } else {
+                    write!(f, "let {} = {}", id, expr)
+                }
             },
             Block(instrs) => { 
                 write!(f, "{{{}}}", instrs.into_iter()
@@ -33,7 +37,7 @@ impl From<ParseInstruction> for Result<Instruction, ParseError> {
     fn from(instr: ParseInstruction) -> Self {
         match instr {
             ParseInstruction::Expr(expr) => Ok(Instruction::Expr(Expression::parse(&expr.to_string())?)),
-            ParseInstruction::Let{id, expr, ..} => Ok(Instruction::Let{id: id.to_string(), expr: Expression::parse(&expr.to_string())?}),
+            ParseInstruction::Let{id, mutable, expr, ..} => Ok(Instruction::Let{id: id.to_string(), mutable, expr: Expression::parse(&expr.to_string())?}),
             ParseInstruction::Block(instrs) => {
                 let instrs: Result<Vec<Instruction>, ParseError> = instrs.into_iter().map(|x| <_>::from(x)).collect();
                 Ok(Instruction::Block(instrs?))

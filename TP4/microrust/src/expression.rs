@@ -3,12 +3,13 @@ use crate::parser::ParseError;
 use crate::binop::Binop;
 use crate::parsing::leftexpression::LeftExpression;
 use std::fmt::Display;
+use crate::value::Value;
 
 ////////////////////////////////////////////////////////////////////////////////
 #[derive(Debug)]
 #[derive(Clone)]
 pub enum Expression {
-    Const(isize),
+    Const(ParsedValue),
     Identifier(Identifier),
     BinOp(Box<Expression>, Binop, Box<Expression>),
     // à compléter ensuite
@@ -40,7 +41,7 @@ impl From<ParseExpression> for Result<Expression, ParseError> {
     fn from(expr: ParseExpression) -> Self {
         match expr {
             ParseExpression::Const(ParsedValue::Integer(i)) => 
-                Ok(Expression::Const(i)),
+                Ok(Expression::Const(ParsedValue::Integer(i))),
             ParseExpression::ValueAt(LeftExpression::Identifier(id)) => 
                 Ok(Expression::Identifier(id.clone())),
             ParseExpression::BinOp(lhs, binop, rhs) => {

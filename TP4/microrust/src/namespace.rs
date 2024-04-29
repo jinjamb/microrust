@@ -1,8 +1,10 @@
 use crate::error::EvalError;
 use crate::identifier::Identifier;
+use crate::value::Value;
+use crate::memorycell::MemoryCell;
 use std::collections::HashMap;
 
-pub struct NameSpace (HashMap<Identifier, isize>);
+pub struct NameSpace(HashMap<Identifier, MemoryCell>);
 
 impl NameSpace {
 
@@ -10,19 +12,29 @@ impl NameSpace {
         NameSpace(HashMap::new())
     }
 
-    pub fn find(&self, id: &Identifier) -> Result<isize, EvalError> {
+    pub fn declare(&mut self, id: &Identifier, memcell: MemoryCell) -> Result<(), EvalError> {
+//        self.0.try_insert(id, value).map_err(|_| EvalError::AlreadyDefined(id))
+        if self.0.contains_key(&id) {
+            Err(EvalError::AlreadyDefined(id.clone()))
+        } else {
+            self.0.insert(id.clone(), memcell);
+            Ok(())
+        }
+    }
+
+    pub fn find(&self, id: &Identifier) -> Result<Value, EvalError> {
         match self.0.get(id) {
-            Some(&value) => Ok(value),
+            Some(MemoryCell) => MemoryCell.get_value(),
             None => Err(EvalError::Undefined(id.clone())),
         }
     }
 
-    pub fn declare(&mut self, id: &Identifier, val: isize) -> Result<(), EvalError> {
-        if self.0.get(id).is_some() {
-            Err(EvalError::AlreadyDefined(id.clone()))
-        } else {
-            self.0.insert(id.clone(), val);
-            Ok(())
+    pub fn set(&mut self, id: &Identifier, value: Value) -> Result<(), EvalError> {
+        match self.0.get_mut(id) {
+            Some(MemoryCell) => {
+                MemoryCell.set_value(value)
+            },
+            None => Err(EvalError::Undefined(id.clone())),
         }
     }
 }

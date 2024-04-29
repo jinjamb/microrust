@@ -2,6 +2,7 @@ use std::fmt::{self, Display};
 
 use crate::expression::Expression;
 use crate::identifier::Identifier;
+use crate::r#type::Type;
 
 use crate::parser::ParseError;
 
@@ -17,8 +18,8 @@ pub enum EvalError {
     DivisionByZero(Expression),
     Undefined(Identifier),
     AlreadyDefined(Identifier),
-    NotMutable(Identifier),
-//    TypeMismatch{expression: Expression, expected: Type, found: Type},
+    NotMutable(Option<Expression>),
+    TypeMismatch{expression: Expression, expected: Type, found: Type},
 }
 
 impl From<ParseError> for Error {
@@ -40,8 +41,8 @@ impl Display for EvalError {
             DivisionByZero(e) => write!(f, "Division by zero, `{}` evaluates to 0", e),
             Undefined(id) => write!(f, "Undefined identifier: `{}`", id),
             AlreadyDefined(id) => write!(f, "Identifier `{}` already defined.", id),
-            NotMutable(id) => write!(f, "Variable `{}` is not mutable.", id),
-//            TypeMismatch => write!(f, "Type mismatch"),
+            NotMutable(e) => write!(f, "Cell {}is not mutable.", e.as_ref().map(|e| format!("at `{}` ", e)).unwrap_or("".to_string())),
+            TypeMismatch => write!(f, "Type mismatch"),
         }
     }
 }
