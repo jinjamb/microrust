@@ -44,7 +44,13 @@ impl Expression {
 impl Instruction {
     pub fn exec(&self, nss: &mut NameSpaceStack) -> Result<(Option<Identifier>, Value), EvalError> {
         match self {
-            Instruction::Let{id, mutable, expr} => todo!(),
+            Instruction::Let{id, mutable, expr} => {
+                let entier = expr.eval(nss)?;
+                let ismut = mutable;
+                let id = &Identifier::from(id.as_str());
+                let _def = nss.declare(id, *ismut, entier);
+                Ok((Some(id.clone()), entier.clone()))
+            },
             Instruction::Expr(expr) => {
                 Ok((None, expr.eval(nss)?))
             }

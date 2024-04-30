@@ -1,9 +1,10 @@
+use crate::identifier::Identifier;
 use crate::expression::Expression;
 
 #[derive(Debug)]
 pub enum Instruction {
     Expr(Expression),
-    Let{id:String, mutable:bool, expr:Expression},
+    Let{id:String, mutable: bool, expr:Expression},
     Block(Vec<Instruction>),
 } 
 

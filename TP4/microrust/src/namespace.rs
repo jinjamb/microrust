@@ -2,6 +2,7 @@ use crate::error::EvalError;
 use crate::identifier::Identifier;
 use crate::value::Value;
 use crate::memorycell::MemoryCell;
+use crate::memory::Address;
 use std::collections::HashMap;
 
 pub struct NameSpace(HashMap<Identifier, MemoryCell>);
@@ -36,5 +37,9 @@ impl NameSpace {
             },
             None => Err(EvalError::Undefined(id.clone())),
         }
+    }
+
+    pub fn contains_key(&self, id: &Identifier) -> bool {
+        self.0.contains_key(id)
     }
 }

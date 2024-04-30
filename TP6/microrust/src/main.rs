@@ -6,6 +6,7 @@ mod error;
 mod value;
 mod namespace;
 mod namespacestack;
+mod memorycell;
 mod eval;
 mod r#type;
 

@@ -1,4 +1,5 @@
 use crate::{error::EvalError, identifier::Identifier, namespace::NameSpace, value::Value};
+use crate::memorycell::MemoryCell;
 
 pub struct NameSpaceStack {
     stack: Vec<NameSpace>,
@@ -18,7 +19,7 @@ impl NameSpaceStack {
     }
 
     pub fn declare(&mut self, id: &Identifier, mutable: bool, value: Value) -> Result<(), EvalError> {
-        self.stack.last_mut().unwrap().declare(id, mutable, value)
+        self.stack.last_mut().unwrap().declare(id, MemoryCell::new(mutable, value.clone()))
     }
 
     pub fn find(&self, id: &Identifier) -> Result<Value, EvalError> {

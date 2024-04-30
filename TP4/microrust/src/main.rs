@@ -14,6 +14,7 @@ mod r#type;
 mod test_namespace;
 mod test_namespace_stack;
 mod memorycell;
+mod memory;
 
 use std::io::{self, BufRead, Write};
 use namespacestack::NameSpaceStack;

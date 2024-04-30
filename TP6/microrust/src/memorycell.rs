@@ -1,6 +1,8 @@
-use crate::{Value, EvaluationError};
+use crate::{error::EvalError, value::Value};
 
-struct MemoryCell {
+#[derive(Debug)]
+
+pub struct MemoryCell {
     mutable: bool,
     value:  Value,
 }
@@ -17,21 +19,12 @@ impl MemoryCell {
         self.mutable
     }
 
-    pub fn get_value(&self) -> Result<&Value, EvaluationError>{
-        if !self.mutable {
-            return Err(EvaluationError::NotMutable);
-        }
-        if let Value::None = self.value {
-            return Err(EvaluationError::NonAllocatedCell);
-        }
-        Ok(&self.value)
+    pub fn get_value(&self) -> Result<Value, EvalError>{
+        Ok(self.value.clone())
     }
 
-    pub fn set_value(&mut self, value: Value) -> Result<(), EvaluationError> {
-        if !self.mutable {
-            return Err(EvaluationError::NotMutable);
-        }
-        self.value = value;
-        Ok(())
+    pub fn set_value(&mut self, value: Value) -> Result<(), EvalError> {
+        if (&self).is_mutable() {Ok(self.value = value)}
+        else {Err(EvalError::NotMutable(None))}
     }
 }

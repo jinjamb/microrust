@@ -6,7 +6,14 @@ pub enum Binop {
     Mul,
     Div,
     Mod,
-    // à compléter ensuite
+    Leq,
+    Geq,
+    Lt,
+    Gt,
+    Eq,
+    Neq,
+    And,
+    Or
 }
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -21,6 +28,14 @@ impl Display for Binop {
             Mul => write!(f, "*"),
             Div => write!(f, "/"),
             Mod => write!(f, "%"),
+            Leq => write!(f, "<="),
+            Geq => write!(f, ">="),
+            Lt => write!(f, "<"),
+            Gt => write!(f, ">"),
+            Eq => write!(f, "=="),
+            Neq => write!(f, "!="),
+            And => write!(f, "&&"),
+            Or => write!(f, "||"),
         }
     }
 }
@@ -37,7 +52,14 @@ impl From<ParseBinop> for Result<Binop, ParseError> {
             ParseBinop::Mul => Ok(Binop::Mul),
             ParseBinop::Div => Ok(Binop::Div),
             ParseBinop::Mod => Ok(Binop::Mod),
-            _ => { Err(ParseError::SyntaxNotSupported) }
+            ParseBinop::Leq => Ok(Binop::Leq),
+            ParseBinop::Geq => Ok(Binop::Geq),
+            ParseBinop::Lt => Ok(Binop::Lt),
+            ParseBinop::Gt => Ok(Binop::Gt),
+            ParseBinop::Eq => Ok(Binop::Eq),
+            ParseBinop::Neq => Ok(Binop::Neq),
+            ParseBinop::And => Ok(Binop::And),
+            ParseBinop::Or => Ok(Binop::Or),
         }
     }
 }

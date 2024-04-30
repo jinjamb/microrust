@@ -12,7 +12,7 @@ pub enum Error {
     EvalError(EvalError),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[allow(dead_code)]
 pub enum EvalError {
     DivisionByZero(Expression),
